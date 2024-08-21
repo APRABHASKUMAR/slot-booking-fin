@@ -4,7 +4,7 @@ import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import "./oauth.css";
 import { app } from "../firebase";
 
-const OAuth = () => {
+function OAuth(){
   const auth = getAuth(app);
   const handleGooogleClick = async () => {
     const provider = new GoogleAuthProvider();
