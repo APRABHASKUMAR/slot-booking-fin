@@ -5,9 +5,58 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* background-image: url("../public/keyboard.jpg"); */
 }
+
+/* .box{
+  padding: 1rem;
+  background-color: azure;
+} */
+
+footer{
+  position:fixed;
+  width: 100%;
+  top:auto;
+  bottom: 0;
+}
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.spacing{
+  margin: 3rem auto auto auto;
+}
+
+.drop-style{
+  position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;
+}
+
+.display{
+  /* display: flex; */
+  justify-content: center;
+  margin-top: 4rem;
+  width: 50%;
+}
+
+.dis-login{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.width{
+  width: 40%;
+}
+
+.outfit-heading {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 5rem;
+  /* width: 80%; */
 }
