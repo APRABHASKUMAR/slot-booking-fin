@@ -1,0 +1,13 @@
+.clr{
+   color:gray;
+   font-size: 1rem;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    /* z-index: 1000;  */
+}

@@ -5,7 +5,7 @@ import "./oauth.css";
 import { app } from "../firebase";
 import Heading from "./Heading";
 
-const OAuth = () => {
+function OAuth(){
   const auth = getAuth(app);
   const handleGooogleClick = async () => {
     const provider = new GoogleAuthProvider();
