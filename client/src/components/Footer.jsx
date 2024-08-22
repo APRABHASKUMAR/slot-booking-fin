@@ -3,7 +3,7 @@ import "./Footer.css";
 
 function Footer() {
   return (
-    <footer className="footer mt-auto bg-dark aligning">
+    <footer className="footer mt-auto bg-dark">
         <div className="container" >
             <div className="row">
                 <div className="col">

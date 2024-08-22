@@ -4,7 +4,7 @@ function Content(props){
     return(
         <div className="container">
     <div className="row mt-5 mb-3">
-        <div className="col">
+        <div className="col outfit-heading">
             <h1>
                 
 {props.title}

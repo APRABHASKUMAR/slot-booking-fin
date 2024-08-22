@@ -5,9 +5,81 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* background-image: url("../public/keyboard.jpg"); */
 }
+
+/* .box{
+  padding: 1rem;
+  background-color: azure;
+} */
+
+.bottom{
+  margin-bottom: 5rem;
+}
+
+.forButton{
+  z-index:20;
+  transition:all 0.8s;
+}
+
+footer{
+  position:fixed;
+  width: 100%;
+  top:auto;
+  bottom: 0;
+}
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.spacing{
+  margin: 3rem auto auto auto;
+}
+
+.drop-style{
+  position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;
+}
+
+.display{
+  /* display: flex; */
+  justify-content: center;
+  margin-top: 2.5rem;
+  width: 27%;
+  margin-bottom: 4rem;
+}
+
+.dis-login{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.width{
+  /* width: 35%; */
+  display: flex; 
+  justify-content: center;
+}
+
+.big-heading {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 5rem;
+  /* width: 80%; */
+}
+
+.medium-heading {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 3rem;
+  text-align: center;
+  /* width: 80%; */
+}
+
