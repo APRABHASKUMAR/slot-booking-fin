@@ -45,7 +45,7 @@ function Header() {
                                 Santosh Bangaru
                             </a>
                             <ul className="dropdown-menu dropdown-menu-end">
-                                <li><a className="dropdown-item" href="/accounts/logout/">Logout</a></li>
+                                <li><a className="dropdown-item" href="/">Logout</a></li>
                             </ul>
                         </li>
                         
