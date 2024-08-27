@@ -85,7 +85,7 @@ function Select() {
             .then(response => {
                 setUsername(response.data.username);
                 setPassword(response.data.password);
-                alert(`Username: ${response.data.username}\nPassword: ${response.data.password}`);
+                alert(`Course: ${selectedCourse}\nDate: ${selectedDate}\nSlot: ${selectedSlot}\n\nUsername: ${response.data.username}\nPassword: ${response.data.password}`);
             })
             .catch(error => {
                 console.error("There was an error generating the credentials!", error);
@@ -164,8 +164,8 @@ function Select() {
                         type="submit" 
                         value="Book" 
                         disabled={!selectedSlot || !selectedCourse || !selectedDate}
-                        onClick={() => alert(`Course: ${selectedCourse}\nDate: ${selectedDate}\nSlot: ${selectedSlot}`)}
-                        // onClick = {handleBookClick} 
+                        // onClick={() => alert(`Course: ${selectedCourse}\nDate: ${selectedDate}\nSlot: ${selectedSlot}`)}
+                        onClick = {handleBookClick} 
                     />
             </div>
         </div>

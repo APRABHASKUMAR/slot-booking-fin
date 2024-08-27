@@ -1,7 +1,6 @@
 import express from "express";
 import mongoose from 'mongoose';
 import cors from "cors";
-const app = express();
 import dotenv from 'dotenv'
 import authRoute from './routes/auth.route.js'
 import bodyParser  from "body-parser";
@@ -14,27 +13,33 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-console.log(__dirname);
-mongoose.connect(process.env.MONGO)
-  .then(() => console.log('MongoDB is connected!')).catch(err => console.log(err));
+const app = express();
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO, {
+      useNewUrlParser: true, 
+      useUnifiedTopology: true 
+    });
+    console.log('MongoDB is connected!');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); 
+  }
+};
 
 
-// CORS
-
-app.use(cors());
-app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Allow-Credentials", true);
-  next();
-});
+connectDB();
 
 
-// BODY PARSER
+app.use(cors({
+  origin: "http://localhost:3000", 
+  credentials: true
+}));
 app.use(express.json());
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/api/auth", authRoute);
+
 
 app.get('/', (req, res) => {
   res.send("Hello from the Node API server!")
@@ -66,9 +71,6 @@ app.get('/api/courses', (req, res) => {
 // Endpoint to get available dates for a course
 app.get('/api/dates', (req, res) => {
     const courseId = req.query.courseId;
-    // if (!courseId) {
-    //   return res.status(400).json({ error: 'Course ID is required' });
-    // } 
     fs.readFile(path.join(__dirname, 'data', 'datesData.json'), 'utf8', (err, data) => {
         if (err) {
             return res.status(500).json({ error: 'Failed to read dates data' });
@@ -107,8 +109,7 @@ app.get('/api/generate-credentials', (req, res) => {
   res.json({ username, password });
 });
 
-app.listen(5000, () => {
-  console.log("Server is running on port 5000")
-})
-
-app.use("/api/auth", authRoute);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
