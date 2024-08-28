@@ -20,7 +20,7 @@ function OAuth() {
       const email = resultsFromGoogle.user.email;
 
       if (email.endsWith(".bits-pilani.ac.in")) { // Ensure the correct domain
-        alert("User is authorized.");
+        // alert("User is authorized.");
 
         const res = await fetch("http://localhost:5000/api/auth/google", {
           method: "POST",
@@ -54,14 +54,16 @@ function OAuth() {
   };
 
   return (
-    <div>
+    <div className= "bg">
       {isAuthorized ? (
         <p>Redirecting...</p> // Temporary message until redirect happens
       ) : (
         <div className="google dis-login box">
-          <Heading title="Welcome to RemoteX" />
-          <p>Use your WILP email ID to login</p>
+          <div className="title">
+          <Heading greeting="Welcome to " title="RemoteX" />
+          </div>
           <GoogleButton type="dark" onClick={handleGoogleClick} />
+          <p className="grey mt-3">Use your WILP email ID to login</p>
         </div>
       )}
       <footer className="footer mt-auto bg-light">

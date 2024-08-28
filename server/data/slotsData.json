@@ -1,0 +1,15 @@
+[
+        { "value": "", "label": "" },
+        { "value": "12:00 AM", "label": "12:00 AM" },
+        { "value": "02:00 AM", "label": "02:00 AM" },
+        { "value": "04:00 AM", "label": "04:00 AM" },
+        { "value": "06:00 AM", "label": "06:00 AM" },
+        { "value": "08:00 AM", "label": "08:00 AM" },
+        { "value": "10:00 AM", "label": "10:00 AM" },
+        { "value": "12:00 PM", "label": "12:00 PM" },
+        { "value": "02:00 PM", "label": "02:00 PM" },
+        { "value": "04:00 PM", "label": "04:00 PM" },
+        { "value": "06:00 PM", "label": "06:00 PM" },
+        { "value": "08:00 PM", "label": "08:00 PM" },
+        { "value": "10:00 PM", "label": "10:00 PM" }
+]
