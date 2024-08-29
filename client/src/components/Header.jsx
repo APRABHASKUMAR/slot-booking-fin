@@ -1,6 +1,7 @@
 import React from "react";
 
 function Header() {
+    const username = localStorage.getItem("userName");
   return (
     <header>
         
@@ -42,7 +43,7 @@ function Header() {
                     
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Santosh Bangaru
+                                {username}
                             </a>
                             <ul className="dropdown-menu dropdown-menu-end">
                                 <li><a className="dropdown-item" href="/">Logout</a></li>
