@@ -1,9 +1,10 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Login from "./pages/login";
 import Home from "./pages/Home";
 import Report from "./pages/Report";
 import Admin from "./pages/admin";
+import Header from "./components/Header";
 
 // Mock function to check if the user is authenticated
 const isAuthenticated = () => {
@@ -11,6 +12,7 @@ const isAuthenticated = () => {
 };
 
 function App() {
+  
   return (
     <Router>
       <Routes>
