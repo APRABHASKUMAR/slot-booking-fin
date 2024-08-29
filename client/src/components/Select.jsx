@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import BookingConfirmationModal from "./BookingConfirmationModal";
+// import Alert from 'react-bootstrap/Alert';
+import BookingSuccess from './BookingSuccess';
+// import SuccessAnimation from "./SuccessAnimation";
 
 function Select() {
     // State variables
@@ -11,6 +15,11 @@ function Select() {
     const [selectedSlot, setSelectedSlot] = useState("");
     const [isCourseSelected, setIsCourseSelected] = useState(false);
     const [isDateSelected, setIsDateSelected] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false);
+
 
     useEffect(() => {
         axios.get('/api/courses')
@@ -76,16 +85,15 @@ function Select() {
     };
 
     //Handle booking
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
     const handleBookClick = () => {
         // Fetch generated credentials from the server
         axios.get('http://localhost:5000/api/generate-credentials')
             .then(response => {
                 setUsername(response.data.username);
                 setPassword(response.data.password);
-                alert(`Course: ${selectedCourse}\nDate: ${selectedDate}\nSlot: ${selectedSlot}\n\nUsername: ${response.data.username}\nPassword: ${response.data.password}`);
+                setShowModal(true);
+                setShowSuccess(true);
+                setTimeout(() => setShowSuccess(false), 3000);
             })
             .catch(error => {
                 console.error("There was an error generating the credentials!", error);
@@ -93,7 +101,7 @@ function Select() {
     };
 
 
-    return <div className="bottom">
+    return <div className="bottom display">
         
         <div className="col-12"> 
             <label for="id_course" className="form-label">Course / Experiment:</label>
@@ -155,7 +163,7 @@ function Select() {
             <small id="slot-length" className="form-text">Slot length: 1 hour</small>
         </div>
 
-        <div className="col-md">
+        <div className="col-12">
             <div className="d-grid gap-2">
                 <label className="form-label">&nbsp;</label>
                 <input 
@@ -164,11 +172,30 @@ function Select() {
                         type="submit" 
                         value="Book" 
                         disabled={!selectedSlot || !selectedCourse || !selectedDate}
-                        // onClick={() => alert(`Course: ${selectedCourse}\nDate: ${selectedDate}\nSlot: ${selectedSlot}`)}
                         onClick = {handleBookClick} 
                     />
             </div>
         </div>
+
+        {/* Animated success message */}
+        {/* <BookingSuccess show={showSuccess} /> */}
+
+        {/* <SuccessAnimation /> */}
+
+        {/* <Alert key="success" variant="success">
+          <Alert.Heading>Booking Successful</Alert.Heading>
+        </Alert> */}
+
+          {/* Modal for booking confirmation */}
+          <BookingConfirmationModal 
+                show={showModal} 
+                onHide={() => setShowModal(false)} 
+                course={selectedCourse}
+                date={selectedDate}
+                slot={selectedSlot}
+                username={username}
+                password={password}
+            />
     </div>
 }
 

@@ -64,10 +64,12 @@ code {
 }
 
 .display{
-  /* display: flex; */
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   margin-top: 2.5rem;
-  width: 27%;
+  width: 29%;
   margin-bottom: 4rem;
 }
 
@@ -79,7 +81,7 @@ code {
 }
 
 .width{
-  /* width: 35%; */
+  width: 100%;
   display: flex; 
   justify-content: center;
 }

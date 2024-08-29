@@ -66,12 +66,12 @@ function OAuth() {
           <p className="grey mt-3">Use your WILP email ID to login</p>
         </div>
       )}
-      <footer className="footer mt-auto bg-light">
+      <footer className="footer mt-auto bg-dark">
         <div className="container">
           <div className="row">
             <div className="col">
               <p className="text-muted text-center mt-3 mb-3">
-                <small className="light">Designed and developed by Divyansh and Vivek</small>
+                <small className="grey">Designed and developed by Divyansh and Vivek</small>
               </p>
             </div>
           </div>
