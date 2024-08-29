@@ -7,9 +7,9 @@ import Heading from "./Heading";
 import { useNavigate } from "react-router-dom";
 
 function OAuth() {
-  const [isAuthorized, setIsAuthorized] = useState(false); // State to track authorization
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const auth = getAuth(app);
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const handleGoogleClick = async () => {
     const provider = new GoogleAuthProvider();
@@ -19,9 +19,7 @@ function OAuth() {
       const resultsFromGoogle = await signInWithPopup(auth, provider);
       const email = resultsFromGoogle.user.email;
 
-      if (email.endsWith(".bits-pilani.ac.in")) { // Ensure the correct domain
-        // alert("User is authorized.");
-
+      if (email.endsWith(".bits-pilani.ac.in")) {
         const res = await fetch("http://localhost:5000/api/auth/google", {
           method: "POST",
           headers: {
@@ -36,13 +34,14 @@ function OAuth() {
         });
 
         const data = await res.json();
-        console.log("Fetch response data:", data); // Debugging: Check fetch response
+        console.log("Fetch response data:", data);
         
         if (res.ok) {
-          // Store token in localStorage
+          // Store token and user's name in localStorage
           localStorage.setItem("authToken", data.token);
+          localStorage.setItem("userName", data.name);  // Store the user's name
           setIsAuthorized(true);
-          navigate("/home"); // Redirect to Home page
+          navigate("/home");
         }
       } else {
         alert("You must use an email ending with '@wilp.bits-pilani.ac.in' to log in.");
@@ -54,13 +53,13 @@ function OAuth() {
   };
 
   return (
-    <div className= "bg">
+    <div className="bg">
       {isAuthorized ? (
-        <p>Redirecting...</p> // Temporary message until redirect happens
+        <p>Redirecting...</p>
       ) : (
         <div className="google dis-login box">
           <div className="title">
-          <Heading greeting="Welcome to " title="RemoteX" />
+            <Heading greeting="Welcome to " title="RemoteX" />
           </div>
           <GoogleButton type="dark" onClick={handleGoogleClick} />
           <p className="grey mt-3">Use your WILP email ID to login</p>
