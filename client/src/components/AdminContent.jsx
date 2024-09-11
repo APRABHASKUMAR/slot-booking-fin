@@ -33,7 +33,7 @@ function AdminContent(){
                       
                       <a href="/admin/password_change/">Change password</a> /
                       
-                      <a href="/admin/logout/">Log out</a>
+                      <a href="/">Log out</a>
                   
               </div>
               
