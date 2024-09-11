@@ -18,8 +18,8 @@ const app = express();
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO, {
-      useNewUrlParser: true, 
-      useUnifiedTopology: true,
+      //useNewUrlParser: true, 
+      //useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
     });
     console.log('MongoDB is connected! wooohooo');
