@@ -19,7 +19,7 @@ function OAuth() {
       const resultsFromGoogle = await signInWithPopup(auth, provider);
       const email = resultsFromGoogle.user.email;
 
-      if (email.endsWith(".bits-pilani.ac.in")) {
+      if (email.endsWith("@pilani.bits-pilani.ac.in")) {
         const res = await fetch("http://localhost:5000/api/auth/google", {
           method: "POST",
           headers: {
