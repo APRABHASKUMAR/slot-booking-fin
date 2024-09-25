@@ -1,8 +1,12 @@
 import express from 'express';
-import { google } from '../controller/auth.controller.js';
+import { login, ssoLogin } from '../controllers/auth.controller.js';
 
 const router = express.Router();
 
-router.post("/google", google);
+// Route for login using email and password
+router.post('/login', login);
+
+// Future SSO login route (Shibboleth or others)
+router.post('/sso-login', ssoLogin);
 
 export default router;
