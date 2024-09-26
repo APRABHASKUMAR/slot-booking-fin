@@ -9,17 +9,15 @@ export const login = async (req, res, next) => {
   
 
   try {
-    const { email, pass } = req.body;
-    // Check if the user exists in the database
-    console.log(pass);
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
-    
+    console.log(user);
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+        
+      return res.status(401).json({ message: "user does not exist" });
+      
     }
-
-    // Compare the provided password with the hashed password in the database
-    const isPasswordValid = await bcrypt.compare(pass, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
@@ -28,7 +26,7 @@ export const login = async (req, res, next) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // Return user details and token
-    const { password, ...rest } = user._doc; // Exclude the password from the response
+    const { passwrd, ...rest } = user._doc; // Exclude the password from the response
     res.status(200).json({
       ...rest,
       token,
