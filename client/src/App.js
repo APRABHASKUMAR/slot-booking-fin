@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './pages/login';
-import Home from './pages/Home';
+import Home from './pages/home';
 import Report from './pages/Report';
 import Admin from './pages/admin';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -22,7 +22,7 @@ const App = () => {
             path="/home"
             element={
               <ProtectedRoute>
-                <Home />
+                <Login />
               </ProtectedRoute>
             }
           />

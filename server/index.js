@@ -125,7 +125,7 @@ app.get("/api/protected", verifyToken, (req, res) => {
 });
 
 // Start the server and listen on the specified port
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7145;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
