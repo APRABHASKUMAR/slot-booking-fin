@@ -8,8 +8,19 @@ import Admin from './pages/admin';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
-  return user ? children : <Navigate to="/" />;
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    // If user is still loading, show a loading indicator (can be any spinner or message)
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    console.log('User is not authenticated, redirecting to login');
+    return <Navigate to="/" />;
+  }
+
+  return children;
 };
 
 const App = () => {

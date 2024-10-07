@@ -1,42 +1,48 @@
-import User from '../models/user.models.js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import User from '../models/user.models.js';
 
-dotenv.config();
+// JWT secret key (replace with a secure, environment-specific secret)
+const JWT_SECRET = 'your_jwt_secret';
 
-export const login = async (req, res, next) => {
-  
+export const login = async (req, res) => {
+  const { email, password } = req.body;
 
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    console.log(user);
+    // Check if the user exists
+    let user = await User.findOne({ email });
+
     if (!user) {
-        
-      return res.status(401).json({ message: "user does not exist" });
-      
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      // If user doesn't exist, create a new one
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user = new User({ email, password: hashedPassword });
+      await user.save();
+    } else {
+      // If user exists, verify the password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Invalid credentials' });
+      }
     }
 
-    // Generate JWT token for the user
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
-    // Return user details and token
-    const { passwrd, ...rest } = user._doc; // Exclude the password from the response
-    res.status(200).json({
-      ...rest,
+    // Prepare user data (excluding sensitive information)
+    const userData = {
+      id: user._id,
+      email: user.email
+      // Add any other user data you want to send to the frontend
+    };
+
+    res.json({
       token,
+      user: userData,
+      message: 'Login successful'
     });
-  } catch (error) {
-    next(error);
-  }
-};
 
-// Optional: Hook for future SSO integration
-export const ssoLogin = async (req, res, next) => {
-  res.status(200).json({ message: "SSO integration available in the future." });
+  } catch (error) {
+    console.error('Authentication error:', error);
+    res.status(500).json({ message: 'An error occurred during authentication' });
+  }
 };

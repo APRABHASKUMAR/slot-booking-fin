@@ -1,58 +1,38 @@
-// src/context/AuthContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-// Create the AuthContext
 const AuthContext = createContext();
 
-// AuthProvider component that wraps the app and provides the context
+export const useAuth = () => useContext(AuthContext);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
-  // On component mount, check if the user is already authenticated
+  // On mount, load the user from localStorage if available
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-          const { data } = await axios.get('http://localhost:5000/api/auth/verify', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setUser(data.user);
-        }
-      } catch (error) {
-        console.log('User is not authenticated');
-      }
-    };
-    fetchUser();
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    setLoading(false); // User loading is done
   }, []);
 
-  // Login function
-  const login = async (email, password) => {
-    try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
-        password
-      });
-      localStorage.setItem('authToken', data.token);
-      setUser(data);
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+  // Function to log in and set the user in state and localStorage
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
-  // Logout function
+  // Function to log out and clear user state and localStorage
   const logout = () => {
-    localStorage.removeItem('authToken');
     setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-// Hook to use the auth context
-export const useAuth = () => useContext(AuthContext);
