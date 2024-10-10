@@ -1,43 +1,62 @@
-import React,{useState,useEffect} from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import Login from "./pages/login";
-import Home from "./pages/Home";
-import Report from "./pages/Report";
-import Admin from "./pages/admin";
-import Header from "./components/Header";
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Login from './pages/login';
+import Home from './pages/Home';
+import Report from './pages/Report';
+import Admin from './pages/admin';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
-// Mock function to check if the user is authenticated
-const isAuthenticated = () => {
-  return !!localStorage.getItem("authToken"); // Assuming token is stored in localStorage
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    // If user is still loading, show a loading indicator (can be any spinner or message)
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    console.log('User is not authenticated, redirecting to login');
+    return <Navigate to="/" />;
+  }
+
+  return children;
 };
 
-function App() {
-  
+const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        
-        {/* Protected route for Home */}
-        <Route 
-          path="/home" 
-          element={isAuthenticated() ? <Home /> : <Navigate to="/" />} 
-        />
-        
-        {/* Protected route for Report */}
-        <Route 
-          path="/report" 
-          element={isAuthenticated() ? <Report /> : <Navigate to="/" />} 
-        />
-        
-        {/* Assuming Admin route also needs protection */}
-        <Route 
-          path="/admin" 
-          element={isAuthenticated() ? <Admin /> : <Navigate to="/" />} 
-        />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report"
+            element={
+              <ProtectedRoute>
+                <Report />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-}
+};
 
 export default App;
