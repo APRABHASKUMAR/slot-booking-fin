@@ -1,0 +1,47 @@
+.booking-card{
+    background-color: rgb(255, 255, 255);
+    padding: 2rem;
+    border-radius: 1rem;
+}
+
+.bottom {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Take up full viewport height */
+    margin-left: 240px; /* Space for the sidebar */
+    overflow: hidden; /* Prevents unwanted scrollbars */
+}
+
+html, body {
+    height: 100%; /* Ensures full height */
+    overflow: hidden; /* Hides scrollbar */
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .bottom {
+        margin-left: 0; /* Full width on small screens */
+    }
+    .booking-card {
+        max-width: 100%;
+        padding: 10px;
+    }
+}
+
+.btn:disabled {
+    background-color: #c3e2ff !important; /* Greyed out background */
+    color: #4385c3 !important; /* Greyed out text */
+    cursor: not-allowed !important; /* Show not-allowed cursor */
+    border-color: #c3e2ff !important; /* Optional: grey border */
+    pointer-events: none; /* Disable pointer events */
+}
+
+.btn:hover:enabled {
+    transform: scale(1.1); 
+    transition: transform 0.2s ease-in-out; 
+}
+  
+
+
+

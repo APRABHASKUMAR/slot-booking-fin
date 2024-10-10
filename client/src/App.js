@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Report from "./pages/Report";
 import Admin from "./pages/admin";
 import Header from "./components/Header";
+import "./stylizer/App.css"
 
 // Mock function to check if the user is authenticated
 const isAuthenticated = () => {

@@ -1,15 +1,12 @@
 body {
   margin: 0;
+  margin-left: 240px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* background-image: url("../public/keyboard.jpg"); */
-}
-
-.bottom{
-  margin-bottom: 5rem;
 }
 
 .forButton{
@@ -61,16 +58,6 @@ code {
 
 .drop-style{
   position: absolute; transform: translate3d(111px, 0px, 0px); top: 0px; left: 0px; will-change: transform;
-}
-
-.display{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 2.5rem;
-  width: 29%;
-  margin-bottom: 4rem;
 }
 
 .dis-login{
