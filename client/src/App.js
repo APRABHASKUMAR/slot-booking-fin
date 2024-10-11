@@ -1,11 +1,12 @@
-// src/App.js
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Login from './pages/login';
-import Home from './pages/Home';
-import Report from './pages/Report';
-import Admin from './pages/admin';
+import React,{useState,useEffect} from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Login from "./pages/login";
+import Home from "./pages/Home";
+import Report from "./pages/Report";
+import Admin from "./pages/admin";
+import Header from "./components/Header";
 import { AuthProvider, useAuth } from './context/AuthContext';
+import "./stylizer/App.css"
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();

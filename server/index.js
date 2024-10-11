@@ -6,13 +6,18 @@ import authRoute from "./routes/auth.route.js";
 import bodyParser from "body-parser";
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+// import "antd/dist/reset.css";
 import generatePassword from "generate-password";
+import Course from "./models/Course.js";
+import Date from "./models/Date.js";
+import Slot from "./models/Slot.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
 import { verifyToken } from "./middleware/authMiddleware.js"; // Middleware for authentication
 import jwt from "jsonwebtoken"; // JWT for token handling
 
-dotenv.config(); // Load environment variables
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,8 +26,10 @@ const app = express();
 // MongoDB connection URI
 const uri = process.env.MONGODB_URI || "your-mongodb-connection-uri";
 
-// MongoDB connection options
-const clientOptions = { serverApi: { version: "1", strict: true, deprecationErrors: true } };
+const clientOptions = { 
+  dbName: 'data', // Specify the database name here
+  serverApi: { version: '1', strict: true, deprecationErrors: true }
+};
 
 // Connect to MongoDB
 mongoose.connect(uri, clientOptions)
@@ -30,7 +37,7 @@ mongoose.connect(uri, clientOptions)
     console.log("Successfully connected to MongoDB!");
   })
   .catch(err => {
-    console.error("Failed to connect to MongoDB:", err);
+    console.error("Failed to connect to MongoDB", err);
   });
 
 // CORS configuration for frontend requests
@@ -45,6 +52,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Route for authentication-related requests
 app.use("/api/auth", authRoute);
+app.use('/api/bookings', bookingRoutes);
 
 // Home route (basic API response)
 app.get("/", (req, res) => {
@@ -53,49 +61,78 @@ app.get("/", (req, res) => {
 
 // Error handling middleware for handling server errors
 app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
+  if (err.name === 'ValidationError') {
+    res.status(400).json({ error: err.message });
+  } else {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      statusCode,
+      message: err.message || "Internal Server Error",
+    });
+  }
 });
 
-// Middleware to serve static files (e.g., for a React build)
-app.use(express.static(path.join(__dirname, "public")));
 
-// Endpoint to get courses (reads data from a local JSON file)
-app.get("/api/courses", (req, res) => {
-  fs.readFile(path.join(__dirname, "data", "coursesData.json"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: "Failed to read courses data" });
+// Middleware to serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Endpoint to get courses
+app.get('/api/courses', async (req, res) => {
+  try {
+    const courses = await Course.find();
+    console.log('Courses found:', courses);  // Log fetched courses
+    if (courses.length === 0) {
+      console.log('No courses found, check collection and data.');
     }
-    res.json(JSON.parse(data));
-  });
+    res.json(courses);
+  } catch (err) {
+    console.error('Error fetching courses:', err);  // Log any errors
+    res.status(500).json({ error: 'Failed to fetch courses' });
+  }
 });
 
-// Endpoint to get available dates for a specific course (based on courseId)
-app.get("/api/dates", (req, res) => {
+
+// Endpoint to get available dates for a course
+app.get('/api/dates', async (req, res) => {
   const courseId = req.query.courseId;
-  fs.readFile(path.join(__dirname, "data", "datesData.json"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: "Failed to read dates data" });
+  try{
+    const dates = await Date.find({ courseId: courseId });
+    console.log("Dates found:", dates);
+    if (dates.length == 0){
+      console.log("No dates found, check data.");
     }
-    const datesData = JSON.parse(data);
-    const dates = datesData[courseId] || [];
-    res.json(datesData);
-  });
+    res.json(dates);
+  } catch (err) {
+    console.error("Error fetching dates:", err);
+    res.status(500).json({error: "Failed to fetch dates"});
+  }
+
+  // const courseId = req.query.courseId;
+  // fs.readFile(path.join(__dirname, 'data', 'datesData.json'), 'utf8', (err, data) => {
+  //   if (err) {
+  //     return res.status(500).json({ error: 'Failed to read dates data' });
+  //   }
+  //   const datesData = JSON.parse(data);
+  //   const dates = datesData[courseId] || [];
+  //   res.json(datesData);
+  // });
 });
 
-// Endpoint to get available slots for a specific course and date
-app.get("/api/slots", (req, res) => {
-  fs.readFile(path.join(__dirname, "data", "slotsData.json"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: "Failed to read slots data" });
+
+// Endpoint to get available slots for a course and date
+app.get('/api/slots', async (req, res) => {
+  try{
+    const slots = await Slot.find();
+    console.log("Slots found:", slots);
+    if (slots.length == 0){
+      console.log("No slots found, check data.");
     }
-    res.json(JSON.parse(data));
-  });
+    res.json(slots);
+  } catch (err) {
+    console.error("Error fetching dates:", err);
+    res.status(500).json({error: "Failed to fetch dates"});
+  }
 });
 
 // Endpoint to generate random username and password (for testing purposes)
