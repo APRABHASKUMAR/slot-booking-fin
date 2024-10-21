@@ -9,7 +9,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import Sidenav from "./Sidenav"
+import Sidenav from "./Sidenav";
+import { Table, Column, HeaderCell, Cell } from 'rsuite-table'; 
 
  
 function Select() {
@@ -29,8 +30,14 @@ function Select() {
     const [bookingError, setBookingError] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogMessage, setDialogMessage] = useState('');
+    const [upcomingBookings, setUpcomingBookings] = useState([]);
+    const [view, setView] = useState("bookings");
 
- 
+      // Fetch the user object from localStorage and parse it
+      const user = JSON.parse(localStorage.getItem("user"));
+    
+      // Get the email and extract the username before the '@'
+      const userid = user?.email.split('@')[0] || ''; // Handle if user or email is undefined
  
     useEffect(() => {
         axios.get('/api/courses')
@@ -96,14 +103,14 @@ function Select() {
     const handleSlotChange = (e) => {
         setSelectedSlot(e.target.value);
     };
- 
+
     //Handle booking
     const handleBookClick = () => {
         const bookingData = {
             courseId: selectedCourse,
             date: selectedDate,
             slot: selectedSlot,
-            userId: '12345' // Replace this with the actual user ID from your auth system
+            userId: userid 
         };
 
         axios.post('/api/bookings/new', bookingData)
@@ -146,21 +153,29 @@ function Select() {
     // };
 
     const handleBookingClick = () => {
-        // Logic for booking a new slot
+        setView("bookings");
         console.log('Navigating to Book a New Slot');
       };
     
-      const handleUpcomingBookingsClick = () => {
-        // Logic for fetching and displaying upcoming bookings
-        console.log('Fetching upcoming bookings');
-        // Fetch upcoming bookings API call
-      };
+    //Handle upcoming bookings
+    const handleUpcomingBookingsClick = () => {
+        axios.get(`/api/bookings/upcoming`, { params: { userId: userid } })
+            .then(response => {
+                setUpcomingBookings(response.data);
+                setView("upcomingBookings");
+            })
+            .catch(error => {
+                console.error("Error fetching upcoming bookings", error.response ? error.response.data : error.message);
+            })
+    }
     
       const handlePastBookingsClick = () => {
         // Logic for fetching and displaying past bookings
         console.log('Fetching past bookings');
         // Fetch past bookings API call
       };
+
+    
  
  
     return <div>
@@ -169,88 +184,120 @@ function Select() {
             onBookingClick={handleBookingClick}
             onUpcomingBookingsClick={handleUpcomingBookingsClick}
             onPastBookingsClick={handlePastBookingsClick}
+            loggedInUser = {userid}
         />
 
-        <div className="bottom">
-        <div className="booking-card">
-
-            <MediumHeading 
-            title = "Book your lab slot"
-            />
-            <div className="col-12 mb-4 mt-5"> 
-                <label for="id_course" className="form-label">Course / Experiment:</label>
-                <select 
-                        name="course" 
-                        className="form-control" 
-                        id="id_course"
-                        value={selectedCourse}
-                        onChange={handleCourseChange}
-                    >
-                        {/* <option value="">--- Select Course ---</option> */}
-                        {courses.map(course => (
-                            <option key={course.id} value={course.id}>
-                                {course.name}
-                            </option>
-                        ))}
-                    </select>
-                <div className="mb-3" ><small id="total-slots-available" className="form-text">Slots remaining: xxx</small></div>
-            </div>
+        {view === "bookings" ? (
+            <div className="bottom">
+            <div className="booking-card">
     
-            <div className="col-12 mb-4">
-            <label for="id_date" className="form-label">Date:</label>
-            <div className="mb-3">
-                        <select 
+                <MediumHeading 
+                title = "Book your lab slot"
+                />
+                <div className="col-12 mb-4 mt-5"> 
+                    <label for="id_course" className="form-label">Course / Experiment:</label>
+                    <select 
+                            name="course" 
                             className="form-control" 
-                            name="date" 
-                            id="id_date" 
-                            value={selectedDate}
-                            onChange={handleDateChange}
-                            disabled={!isCourseSelected}
+                            id="id_course"
+                            value={selectedCourse}
+                            onChange={handleCourseChange}
                         >
-                            {/* <option value="">--- Select Date ---</option> */}
-                            {dates.map(date => (
-                                <option key={date.value} value={date.value}>
-                                    {date.label}
+                            {/* <option value="">--- Select Course ---</option> */}
+                            {courses.map(course => (
+                                <option key={course.id} value={course.id}>
+                                    {course.name}
                                 </option>
                             ))}
                         </select>
-            </div>
-            </div>
-    
-            <div className="col-12">
-                <label for="id_slot" className="form-label">Slot:</label>
-                <select 
-                        className="form-control" 
-                        name="slot" 
-                        id="id_slot" 
-                        value={selectedSlot}
-                        onChange={handleSlotChange}
-                        disabled={!isDateSelected}
-                    >
-                        {/* <option value="">--- Select Slot ---</option> */}
-                        {slots.map(slot => (
-                            <option key={slot.value} value={slot.value}>
-                                {slot.label}
-                            </option>
-                        ))}
+                    <div className="mb-3" ><small id="total-slots-available" className="form-text">Slots remaining: xxx</small></div>
+                </div>
+        
+                <div className="col-12 mb-4">
+                    <label for="id_date" className="form-label">Date:</label>
+                    <div className="mb-3">
+                                <select 
+                                    className="form-control" 
+                                    name="date" 
+                                    id="id_date" 
+                                    value={selectedDate}
+                                    onChange={handleDateChange}
+                                    disabled={!isCourseSelected}
+                                >
+                                    {/* <option value="">--- Select Date ---</option> */}
+                                    {dates.map(date => (
+                                        <option key={date.value} value={date.value}>
+                                            {date.label}
+                                        </option>
+                                    ))}
+                                </select>
+                    </div>
+                </div>
+        
+                <div className="col-12">
+                    <label for="id_slot" className="form-label">Slot:</label>
+                    <select 
+                            className="form-control" 
+                            name="slot" 
+                            id="id_slot" 
+                            value={selectedSlot}
+                            onChange={handleSlotChange}
+                            disabled={!isDateSelected}
+                        >
+                            {/* <option value="">--- Select Slot ---</option> */}
+                            {slots.map(slot => (
+                                <option key={slot.value} value={slot.value}>
+                                    {slot.label}
+                                </option>
+                            ))}
                     </select>
-                <small id="slot-length" className="form-text">Slot length: 1 hour</small>
-            </div>
-    
-            <div className="col-12">
-                <div className="d-grid gap-2">
-                    <label className="form-label">&nbsp;</label>
-                    <input 
-                            className="btn btn-primary" 
-                            id="submit-btn" 
-                            type="submit" 
-                            value="Book Slot" 
-                            disabled={!selectedSlot || !selectedCourse || !selectedDate}
-                            onClick = {handleBookClick} 
-                        />
+                    <small id="slot-length" className="form-text">Slot length: 1 hour</small>
+                </div>
+        
+                <div className="col-12">
+                    <div className="d-grid gap-2">
+                        <label className="form-label">&nbsp;</label>
+                        <input 
+                                className="btn btn-primary" 
+                                id="submit-btn" 
+                                type="submit" 
+                                value="Book Slot" 
+                                disabled={!selectedSlot || !selectedCourse || !selectedDate}
+                                onClick = {handleBookClick} 
+                            />
+                    </div>
                 </div>
             </div>
-        </div>
+            </div>
+        ) : (
+            // Upcoming bookings table view
+            <div className="upcoming-bookings">
+            <MediumHeading title="Your Upcoming Bookings" />
+            {upcomingBookings.length > 0 ? (
+                <Table
+                    height={400}
+                    data={upcomingBookings}
+                >
+                    <Column width={200} align="center" fixed>
+                        <HeaderCell>Course</HeaderCell>
+                        <Cell dataKey="courseName" />
+                    </Column>
+
+                    <Column width={200} align="center">
+                        <HeaderCell>Date</HeaderCell>
+                        <Cell dataKey="date" />
+                    </Column>
+
+                    <Column width={200} align="center">
+                        <HeaderCell>Slot</HeaderCell>
+                        <Cell dataKey="slot" />
+                    </Column>
+                </Table>
+            ) : (
+                <p>No upcoming bookings found.</p>
+            )}
+            </div>
+        )}
 
         <div className='dialog' >
             {/* Dialog Component */}
@@ -289,7 +336,7 @@ function Select() {
                 password={password}
             />
     </div>
-    </div>
+    
 }
  
 export default Select;
