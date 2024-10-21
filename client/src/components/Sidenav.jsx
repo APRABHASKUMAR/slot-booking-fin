@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Sidenav, Nav, CustomProvider } from 'rsuite';
+import { Sidenav, Nav, CustomProvider, Toggle, Modal, Button, Alert } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 import ExitIcon from '@rsuite/icons/Exit';
 import ExpandOutlineIcon from '@rsuite/icons/ExpandOutline';
 import PageEndIcon from '@rsuite/icons/PageEnd';
@@ -10,25 +12,70 @@ import FileUploadIcon from '@rsuite/icons/FileUpload';
 import AdminIcon from '@rsuite/icons/Admin';
 import CalendarIcon from '@rsuite/icons/Calendar';
 import GlobalIcon from '@rsuite/icons/Global';
-
 import "../stylizer/Sidenav.css";
+import Logout from "../pages/logout";
 
-function Navigator({onBookingClick, onUpcomingBookingsClick, onPastBookingsClick}) {
+function Navigator({onBookingClick, onUpcomingBookingsClick, onPastBookingsClick, loggedInUser}) {
   const [isHoveringAdmin, setIsHoveringAdmin] = useState(false);
   const [isHoveringLogOut, setIsHoveringLogOut] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+  const [activeKey, setActiveKey] = useState('1');
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   
+  const openLogoutConfirmation = () => {
+    setShowModal(true);
+    console.log("modal opens");
+  }
+
+  const handleLogout = () => {
+    console.log("logout");
+    logout();
+    setShowModal(false);
+    navigate('/');
+  }
+
+  const handleClose = () => {
+    setShowModal(false);
+  }
+
   const headerStyles = {
     padding: 20,
+    paddingBottom: 10,
     fontSize: 22,
     background: '#1A1D24',
     color: ' #fff',
   };
 
+  const userInfoStyles = {
+    fontSize: 12,
+    padding: 20,
+    paddingTop: 5,
+  }
+
   const instance = (
     <div className="fixed-sidenav" style={{ width: 240 }}>
-      <Sidenav appearance="default">
+      {/* <div style={headerStyles}>
+        <Toggle
+          onChange={setExpanded}
+          checked={expanded}
+          checkedChildren="Expand"
+          unCheckedChildren="Collapse"
+        />
+        <hr />
+      </div> */}
+      <Sidenav 
+        appearance="default"
+        expanded={expanded}
+        activeKey={activeKey}  
+        onSelect={setActiveKey}
+      >
         <Sidenav.Header>
           <div style={headerStyles}>RemoteX</div>
+          <div style={userInfoStyles}>
+            Logged in as: {loggedInUser}
+          </div>
         </Sidenav.Header>
         <Sidenav.Body>
           <Nav>
@@ -59,9 +106,26 @@ function Navigator({onBookingClick, onUpcomingBookingsClick, onPastBookingsClick
           <Nav.Item eventKey="7" icon={<ExitIcon />} 
                     style={isHoveringLogOut ? { color: 'white', backgroundColor: '#FF1E00' } : { color: '#FF1E00', backgroundColor: 'transparent' }}
                     onMouseEnter={() => setIsHoveringLogOut(true)}
-                    onMouseLeave={() => setIsHoveringLogOut(false)}>
-            Logout
+                    onMouseLeave={() => setIsHoveringLogOut(false)}
+                    onSelect={openLogoutConfirmation}>
+            Log Out
           </Nav.Item>
+          <Modal backdrop="static" open={showModal} onClose={handleClose} size="xs">
+                <Modal.Header>
+                    <Modal.Title>Log Out Confirmation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to log out?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={handleLogout} appearance="danger" style={{backgroundColor: "red"}}>
+                        Log Out
+                    </Button>
+                    <Button onClick={handleClose} appearance="subtle">
+                        Cancel
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Nav>
       </Sidenav>
     </div>
