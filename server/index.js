@@ -51,15 +51,15 @@ const transporter = nodemailer.createTransport({
 
 // Route for sending booking confirmation email
 app.post("/api/book/sendEmail", async (req, res) => {
-  const { email, userName, slotDate, slotTime } = req.body;
+  const {email, courseId, date, slot } = req.body;
   console.log(req.body); 
   const emailBody = `
     <h3>Booking Confirmation</h3>
-    <p>Dear ${userName},</p>
+    <p>Dear ${email},</p>
     <p>Thank you for your booking! Here are your booking details:</p>
     <ul>
-      <li><strong>Slot Date:</strong> ${slotDate}</li>
-      <li><strong>Slot Time:</strong> ${slotTime}</li>
+      <li><strong>Slot Date:</strong> ${date}</li>
+      <li><strong>Slot Time:</strong> ${slot}</li>
     </ul>
     <p>If you have any questions, feel free to contact us!</p>
     <p>Best regards,<br/>The Slot Booking Team</p>
