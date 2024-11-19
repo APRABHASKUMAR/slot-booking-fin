@@ -79,7 +79,7 @@ function Navigator({onBookingClick, onUpcomingBookingsClick, onPastBookingsClick
         </Sidenav.Header>
         <Sidenav.Body>
           <Nav>
-            <Nav.Item eventKey="1" active icon={<CalendarIcon />} onSelect={onBookingClick}>
+            <Nav.Item eventKey="1" icon={<CalendarIcon />} onSelect={onBookingClick}>
               Book A New Slot
             </Nav.Item>
             <Nav.Item eventKey="2" icon={<PageEndIcon />} onSelect={onUpcomingBookingsClick}>

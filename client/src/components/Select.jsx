@@ -31,6 +31,7 @@ function Select() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogMessage, setDialogMessage] = useState('');
     const [upcomingBookings, setUpcomingBookings] = useState([]);
+    const [pastBookings, setPastBookings] = useState([]);
     const [view, setView] = useState("bookings");
 
       // Fetch the user object from localStorage and parse it
@@ -129,9 +130,6 @@ function Select() {
                 setIsDateSelected(false);
             })
             .catch(error => {
-                // console.error("Error booking the slot", error);
-                // setBookingError("Failed to book the slot. Please try again."); // Set an error message
-                // Handle error
                 setDialogMessage('Failed to book the slot. Please try another slot.');
                 setDialogOpen(true);
             });
@@ -159,21 +157,66 @@ function Select() {
     
     //Handle upcoming bookings
     const handleUpcomingBookingsClick = () => {
-        axios.get(`/api/bookings/upcoming`, { params: { userId: userid } })
+        console.log("Attempting to fetch upcoming bookings");
+        axios.get(`http://localhost:5000/api/bookings/upcoming`, { params: { userId: userid } })
             .then(response => {
-                setUpcomingBookings(response.data);
-                setView("upcomingBookings");
+                console.log('Data:', response.data);
+                if(response.data.length === 0){
+                    console.log("No upcoming bookings found");
+                }
+                else {
+                    setUpcomingBookings(response.data);
+                    setView("upcomingBookings");
+                }
             })
             .catch(error => {
-                console.error("Error fetching upcoming bookings", error.response ? error.response.data : error.message);
-            })
+                console.error('Complete Error:', error);
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                }
+            });
     }
     
       const handlePastBookingsClick = () => {
-        // Logic for fetching and displaying past bookings
-        console.log('Fetching past bookings');
-        // Fetch past bookings API call
-      };
+        console.log("Attempting to fetch past bookings");
+        axios.get(`http://localhost:5000/api/bookings/past`, { params: { userId: userid } })
+            .then(response => {
+                console.log('Data:', response.data);
+                if(response.data.length === 0){
+                    console.log("No past bookings found");
+                }
+                else {
+                    setPastBookings(response.data);
+                    setView("pastBookings");
+                }
+            })
+            .catch (error => {
+                console.error('Complete Error:', error);
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                }
+            });
+      }
 
     
  
@@ -187,7 +230,7 @@ function Select() {
             loggedInUser = {userid}
         />
 
-        {view === "bookings" ? (
+        {view === "bookings" && (
             <div className="bottom">
             <div className="booking-card">
     
@@ -269,12 +312,15 @@ function Select() {
                 </div>
             </div>
             </div>
-        ) : (
+        )}
+
+        {view === "upcomingBookings" && (
             // Upcoming bookings table view
             <div className="upcoming-bookings">
             <MediumHeading title="Your Upcoming Bookings" />
             {upcomingBookings.length > 0 ? (
                 <Table
+                    className='table-custom'
                     height={400}
                     data={upcomingBookings}
                 >
@@ -292,12 +338,72 @@ function Select() {
                         <HeaderCell>Slot</HeaderCell>
                         <Cell dataKey="slot" />
                     </Column>
+
+                    <Column width={80} fixed="right">
+                        <HeaderCell>Actions</HeaderCell>
+
+                        <Cell style={{ padding: '6px' }}>
+                        {rowData => (
+                            <Button appearance="link" onClick={() => alert(`id:${rowData.id}`)}>
+                            Connect
+                            </Button>
+                            
+                        )}
+                        </Cell>
+                        
+                    </Column>
                 </Table>
             ) : (
                 <p>No upcoming bookings found.</p>
             )}
             </div>
         )}
+
+        {view === "pastBookings" && (
+            // Upcoming bookings table view
+            <div className="past-bookings">
+            <MediumHeading title="Your Past Bookings" />
+            {upcomingBookings.length > 0 ? (
+                <Table
+                    className='table-custom'
+                    height={400}
+                    data={pastBookings}
+                >
+                    <Column width={200} align="center" fixed>
+                        <HeaderCell>Course</HeaderCell>
+                        <Cell dataKey="courseName" />
+                    </Column>
+
+                    <Column width={200} align="center">
+                        <HeaderCell>Date</HeaderCell>
+                        <Cell dataKey="date" />
+                    </Column>
+
+                    <Column width={200} align="center">
+                        <HeaderCell>Slot</HeaderCell>
+                        <Cell dataKey="slot" />
+                    </Column>
+
+                    <Column width={80} fixed="right">
+                        <HeaderCell>Actions</HeaderCell>
+
+                        <Cell style={{ padding: '6px' }}>
+                        {rowData => (
+                            <Button appearance="link" onClick={() => alert(`id:${rowData.id}`)}>
+                            Connect
+                            </Button>
+                            
+                        )}
+                        </Cell>
+                        
+                    </Column>
+                </Table>
+            ) : (
+                <p>No past bookings found.</p>
+            )}
+            </div>
+        )}
+        
 
         <div className='dialog' >
             {/* Dialog Component */}

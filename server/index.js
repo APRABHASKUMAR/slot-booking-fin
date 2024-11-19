@@ -43,16 +43,31 @@ mongoose.connect(uri, clientOptions)
 // CORS configuration for frontend requests
 app.use(cors({
   origin: "http://localhost:3000", // Replace with your frontend URL
-  credentials: true
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 
 // Middleware for parsing JSON and URL-encoded bodies
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+  console.log(`${req.method} request to ${req.url}`);
+  next();
+});
+
+app.use((err, req, res, next) => {
+  console.error(`Error in handling ${req.method} request to ${req.url}:`, err);
+  res.status(500).send('An error occurred');
+});
+
+
 // Route for authentication-related requests
 app.use("/api/auth", authRoute);
 app.use('/api/bookings', bookingRoutes);
+
 
 // Home route (basic API response)
 app.get("/", (req, res) => {
@@ -107,16 +122,6 @@ app.get('/api/dates', async (req, res) => {
     console.error("Error fetching dates:", err);
     res.status(500).json({error: "Failed to fetch dates"});
   }
-
-  // const courseId = req.query.courseId;
-  // fs.readFile(path.join(__dirname, 'data', 'datesData.json'), 'utf8', (err, data) => {
-  //   if (err) {
-  //     return res.status(500).json({ error: 'Failed to read dates data' });
-  //   }
-  //   const datesData = JSON.parse(data);
-  //   const dates = datesData[courseId] || [];
-  //   res.json(datesData);
-  // });
 });
 
 
@@ -162,7 +167,7 @@ app.get("/api/protected", verifyToken, (req, res) => {
 });
 
 // Start the server and listen on the specified port
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.SERVER_PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

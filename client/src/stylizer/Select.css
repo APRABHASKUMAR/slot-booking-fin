@@ -42,6 +42,32 @@ html, body {
     transform: scale(1.1); 
     transition: transform 0.2s ease-in-out; 
 }
+
+/* Example CSS for table styling */
+.table-custom {
+    font-family: Arial, sans-serif; /* Specify a font family */
+    border-collapse: collapse; /* Removes spacing between table cells */
+    width: 100%; /* Table width */
+    background-color: #f8f9fa; /* Background color for the table */
+}
+  
+.table-custom th, .table-custom td {
+  border: 1px solid #dee2e6; /* Border color */
+  text-align: left; /* Align text to the left */
+  padding: 8px; /* Padding inside cells */
+}
+
+.table-custom th {
+  background-color: #007bff; /* Background color for header */
+  color: white; /* Text color for header */
+}
+
+.table-custom tr:nth-child(even) {
+  background-color: #f2f2f2; /* Zebra striping for rows */
+}
+
+
+  
   
 
 
