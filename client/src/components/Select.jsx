@@ -36,7 +36,7 @@ function Select() {
 
       // Fetch the user object from localStorage and parse it
       const user = JSON.parse(localStorage.getItem("user"));
-    
+      const email = user?.email || '';
       // Get the email and extract the username before the '@'
       const userid = user?.email.split('@')[0] || ''; // Handle if user or email is undefined
  
@@ -116,12 +116,20 @@ function Select() {
 
         axios.post('/api/bookings/new', bookingData)
             .then(response => {
-                // setShowModal(true);  // Show confirmation modal
-                // setShowSuccess(true); // Show success message
-                // setBookingError(null); // Clear any errors
-                // Handle success
-                setDialogMessage('Booking successful!');
-                setDialogOpen(true);
+                axios.post('/api/book/sendEmail', {
+                    email,
+                    courseId: selectedCourse,
+                    date: selectedDate,
+                    slot: selectedSlot
+                })
+                .then(() => {
+                    setDialogMessage('Booking successful! A confirmation email has been sent.');
+                    setDialogOpen(true);
+                })
+                .catch(err => {
+                    setDialogMessage('Booking successful! But an error occurred while sending the email.');
+                    setDialogOpen(true);
+                });
                 // Reset form
                 setSelectedCourse("");
                 setSelectedDate("");
