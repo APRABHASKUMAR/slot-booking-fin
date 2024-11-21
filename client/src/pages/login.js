@@ -52,8 +52,9 @@ const Login = () => {
                                 <h2 className="mb-2 mt-3">Login to <span className="fw-bold accent">RemoteX</span></h2>
                                 <p className="text-white-50 mb-5">Please enter your email and password</p>
                                 <form onSubmit={handleLogin} className='align-center'>
-                                    <MDBInput 
+                                    <MDBInput
                                         wrapperClass='mb-4 mx-5 w-100' 
+                                        inputClass='login-input'
                                         labelClass='text-white' 
                                         label='Email address' 
                                         id='formControlLg' 
@@ -67,6 +68,7 @@ const Login = () => {
                                     />
                                     <MDBInput 
                                         wrapperClass='mb-4 mx-5 w-100' 
+                                        inputClass='login-input'
                                         labelClass='text-white' 
                                         label='Password' 
                                         id='formControlLg' 

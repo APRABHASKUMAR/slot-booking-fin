@@ -34,11 +34,24 @@ mongoose.connect(uri, clientOptions)
   .catch(err => console.error("Failed to connect to MongoDB", err));
 
 app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
+  origin: "http://localhost:3000", // Replace with your frontend URL
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  console.log(`${req.method} request to ${req.url}`);
+  next();
+});
+
+app.use((err, req, res, next) => {
+  console.error(`Error in handling ${req.method} request to ${req.url}:`, err);
+  res.status(500).send('An error occurred');
+});
 
 // Nodemailer SMTP transporter setup
 const transporter = nodemailer.createTransport({
@@ -167,6 +180,8 @@ app.get("/api/protected", verifyToken, (req, res) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+// Start the server and listen on the specified port
+const PORT = process.env.SERVER_PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

@@ -37,6 +37,14 @@ input:not(:-webkit-autofill) {
     animation-name: onAutoFillCancel;
 }
 
+.login-container input[type="email"],
+.login-container input[type="password"] {
+    color: white ; /* Ensures overriding any other styles */
+    caret-color: white ; /* Ensures the text cursor color is also white */
+}
+
+
+
 
 
 
