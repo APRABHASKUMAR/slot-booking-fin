@@ -1,4 +1,4 @@
-import ac from '../config/accessControl';
+import ac from '../config/accessControl.js';
 
 function checkAccess(action, resource) {
   return function(req, res, next) {
@@ -11,4 +11,4 @@ function checkAccess(action, resource) {
   };
 }
 
-export default checkAccess;
+export {checkAccess};

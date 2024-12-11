@@ -324,12 +324,13 @@ function Select() {
 
         {view === "upcomingBookings" && (
             // Upcoming bookings table view
-            <div className="upcoming-bookings">
+            <div className="place booking-card">
             <MediumHeading title="Your Upcoming Bookings" />
             {upcomingBookings.length > 0 ? (
                 <Table
                     className='table-custom'
                     height={400}
+                    width={600}
                     data={upcomingBookings}
                 >
                     <Column width={200} align="center" fixed>

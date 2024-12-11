@@ -13,7 +13,10 @@ import generatePassword from "generate-password";
 import Course from "./models/Course.js";
 import Date from "./models/Date.js";
 import Slot from "./models/Slot.js";
+import CourseEntry from "./models/CourseEntry.js";
 import { verifyToken } from "./middleware/authMiddleware.js";
+import { authenticateAdmin } from "./middleware/adminAccess.js";
+import adminRoute from './routes/adminRoute.js';
 
 dotenv.config();
 
@@ -52,6 +55,9 @@ app.use((err, req, res, next) => {
   console.error(`Error in handling ${req.method} request to ${req.url}:`, err);
   res.status(500).send('An error occurred');
 });
+
+// Use adminRoute for the '/admin' prefix
+app.use('/admin', adminRoute);  // All /admin routes will be handled by adminRoute.js
 
 // Nodemailer SMTP transporter setup
 const transporter = nodemailer.createTransport({
@@ -95,6 +101,53 @@ app.post("/api/book/sendEmail", async (req, res) => {
     res.status(500).json({ message: 'Error sending email', error: error.message });
   }
 });
+
+// routes for adding courses
+app.post('/admin/courses', authenticateAdmin, async (req, res) => {
+  const { courseId, courseName, date, slot } = req.body;
+
+  // Validate input
+  if (!courseId || !courseName || !date || !slot) {
+    return res.status(400).json({ message: 'Course ID, Name, Date, and Slot are required' });
+  }
+
+  try {
+    // Create a new course
+    const newCourse = new CourseEntry({ courseId, courseName, date, slot });
+    await newCourse.save();  // Save to the database
+
+    res.status(201).json({
+      message: 'Course added successfully',
+      course: newCourse,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error adding course', error });
+  }
+});
+
+// routes for deleting courses
+app.delete('/admin/courses/:courseId', authenticateAdmin, async (req, res) => {
+  const { courseId } = req.params;
+
+  try {
+    // Find and delete the course by its courseId
+    const deletedCourse = await Course.findOneAndDelete({ courseId });
+
+    if (!deletedCourse) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    res.status(200).json({
+      message: 'Course deleted successfully',
+      deletedCourse,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting course', error });
+  }
+});
+
 
 // Authentication and booking routes
 app.use("/api/auth", authRoute);

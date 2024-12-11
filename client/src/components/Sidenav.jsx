@@ -14,16 +14,49 @@ import CalendarIcon from '@rsuite/icons/Calendar';
 import GlobalIcon from '@rsuite/icons/Global';
 import "../stylizer/Sidenav.css";
 import Logout from "../pages/logout";
+import CreateUser from "./CreateUser";
+import ChangePassword from "./ChangePassword.jsx";
 
 function Navigator({onBookingClick, onUpcomingBookingsClick, onPastBookingsClick, loggedInUser}) {
   const [isHoveringAdmin, setIsHoveringAdmin] = useState(false);
   const [isHoveringLogOut, setIsHoveringLogOut] = useState(false);
   const [expanded, setExpanded] = useState(true);
   const [activeKey, setActiveKey] = useState('1');
-  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [showCreateUser, setShowCreateUser] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const openChangePasswordModal = () => setShowModal(true);
+  const closeChangePasswordModal = () => setShowModal(false);
   
+  const checkUserExistence = async (username) => {
+    try {
+      const response = await fetch('http://localhost:5000/admin/check-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),  // Send username in the request body
+      });
+  
+      const data = await response.json();
+      // console.log('Response:', data);  // Log the response from the backend
+
+      // Check status code directly
+      if (response.status === 200) {
+        alert(data.message);  // If user exists, show alert
+      } else if (response.status === 404) {
+        alert(data.message);  // If user doesn't exist, show alert
+      } else {
+        alert('Unexpected response from server');
+      }
+    } catch (error) {
+      console.error('Error checking user existence:', error);
+      alert('Error checking user existence');
+    }
+  };
+
   const openLogoutConfirmation = () => {
     setShowModal(true);
     console.log("modal opens");
@@ -110,6 +143,13 @@ function Navigator({onBookingClick, onUpcomingBookingsClick, onPastBookingsClick
                     onSelect={openLogoutConfirmation}>
             Log Out
           </Nav.Item>
+          {/* <Nav.Item eventKey="6" icon={<AdminIcon />}
+                    style = {isHoveringAdmin ? {color: 'white', backgroundColor: '#59CE8F'} : {color: '#59CE8F', backgroundColor: 'transparent'}}
+                    onMouseEnter={() => setIsHoveringAdmin(true)}
+                    onMouseLeave={() => setIsHoveringAdmin(false)}
+                    onSelect={checkUserExistence("Administrator")}>
+            Test
+          </Nav.Item> */}
           <Modal backdrop="static" open={showModal} onClose={handleClose} size="xs">
                 <Modal.Header>
                     <Modal.Title>Log Out Confirmation</Modal.Title>
@@ -133,6 +173,8 @@ function Navigator({onBookingClick, onUpcomingBookingsClick, onPastBookingsClick
 
   return <CustomProvider theme="dark">
     {instance}
+    {/* CreateUser Modal */}
+    {/* <ChangePassword showModal={showModal} handleClose={closeChangePasswordModal} /> */}
   </CustomProvider>;
 }
 

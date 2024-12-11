@@ -2,7 +2,23 @@
     background-color: rgb(255, 255, 255);
     padding: 2rem;
     border-radius: 1rem;
-    color: black;
+    /* color: black; */
+}
+
+.place{
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers horizontally */
+    justify-content: center; /* Centers vertically */
+    height: 100vh;
+    text-align: center; /* Align text in the center */
+    overflow: hidden; /* Prevent scrollbars from appearing */
+    margin-left: 240px; /* Space for the sidebar */
+}
+
+.table-custom {
+    max-height: 60vh; /* Prevents the table from exceeding the viewport */
+    width: 80%; /* Adjust width to make the table responsive */
 }
 
 .bottom {
