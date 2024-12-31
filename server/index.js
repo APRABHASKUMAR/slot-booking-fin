@@ -14,6 +14,7 @@ import Course from "./models/Course.js";
 import Date from "./models/Date.js";
 import Slot from "./models/Slot.js";
 import { verifyToken } from "./middleware/authMiddleware.js";
+import fs from "fs";  // Import fs module
 
 dotenv.config();
 
@@ -62,10 +63,40 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Route for sending booking confirmation email
+// Route for sending booking confirmation email with RDP file
 app.post("/api/book/sendEmail", async (req, res) => {
-  const {email, courseId, date, slot } = req.body;
-  console.log(req.body); 
+  const { email, courseId, date, slot } = req.body;
+  
+  // Generate a random username and password (optional)
+  // const username = generatePassword.generate({ length: 5, numbers: true });
+  // const password = generatePassword.generate({ length: 8, numbers: true, symbols: true, uppercase: true });
+  const username="bits";
+  const password="adas@123";
+
+  // Create the RDP file content
+  const rdpContent = `
+    screen mode id:i:2
+    full address:s:172.16.57.186
+    username:s:${username}
+    password:s:${password}
+    autoreconnection enabled:i:1
+    use multimon:i:0
+    desktopwidth:i:1920
+    desktopheight:i:1080
+  `;
+
+  // Generate file path for RDP file
+  const rdpFilePath = path.join(__dirname, 'rdp-files', `${email}_booking.rdp`);
+
+  // Ensure the 'rdp-files' directory exists
+  if (!fs.existsSync(path.join(__dirname, 'rdp-files'))) {
+    fs.mkdirSync(path.join(__dirname, 'rdp-files'));
+  }
+
+  // Write the RDP file
+  fs.writeFileSync(rdpFilePath, rdpContent, 'utf8');
+
+  // Email body
   const emailBody = `
     <h3>Booking Confirmation</h3>
     <p>Dear ${email},</p>
@@ -73,25 +104,39 @@ app.post("/api/book/sendEmail", async (req, res) => {
     <ul>
       <li><strong>Slot Date:</strong> ${date}</li>
       <li><strong>Slot Time:</strong> ${slot}</li>
+      <li><strong>Username:</strong> ${username}</li>
+      <li><strong>Password:</strong> ${password}</li>
     </ul>
     <p>If you have any questions, feel free to contact us!</p>
     <p>Best regards,<br/>The Slot Booking Team</p>
   `;
 
+  // Set up mail options with the RDP file attachment
   const mailOptions = {
     from: process.env.SMTP_USER,
     to: email,
     subject: 'Booking Confirmation',
-    html: emailBody
+    html: emailBody,
+    attachments: [
+      {
+        filename: 'booking.rdp',
+        path: rdpFilePath
+      }
+    ]
   };
 
   try {
     console.log('Sending email to:', email);
+    // Send email with the RDP file attached
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent: %s', info.messageId);
-    res.status(200).json({ message: 'Booking confirmed and email sent!' });
+
+    // Cleanup: Delete the RDP file after sending the email
+    fs.unlinkSync(rdpFilePath);
+
+    res.status(200).json({ message: 'Booking confirmed and email sent with RDP file!' });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending email or creating RDP file:', error);
     res.status(500).json({ message: 'Error sending email', error: error.message });
   }
 });
